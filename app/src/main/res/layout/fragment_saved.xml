@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="10dp"
+    android:backgroundTint="@android:color/white"
+    tools:context=".Fragment.SavedFragment">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:backgroundTint="@color/white">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/always_forever"
+                android:textSize="50dp"
+                android:textColor="@color/colorPrimaryDark"
+                android:text="@string/app_name"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="8dp"
+                android:textStyle="bold"
+                android:id="@+id/top_heading"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_back"
+                android:layout_below="@id/top_heading"
+                android:padding="15dp"
+                android:visibility="gone"
+                android:id="@+id/back"/>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_below="@id/back"
+                android:id="@+id/search_rel">
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@drawable/bottom_navigation_background"
+                    android:backgroundTint="#1C000000"
+                    android:fontFamily="@font/sfpro_regular"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:paddingStart="24dp"
+                    android:maxLines="1"
+                    android:layout_centerVertical="true"
+                    android:id="@+id/et_search"/>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_search"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:paddingEnd="24dp"/>
+
+            </RelativeLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/saved_recipes_heading"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="24dp"
+                android:layout_below="@id/search_rel"
+                android:textColor="@color/colorPrimaryDark"
+                android:fontFamily="@font/sfpro_bold"
+                android:textSize="30dp"
+                android:id="@+id/tv_saved_recipe"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_saved_recipe"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="12dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:orientation="vertical"
+                android:layout_marginBottom="100dp"
+                android:id="@+id/recyclerview_vertical"/>
+
+
+        </RelativeLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:lottie_rawRes="@raw/burger_animation"
+        android:layout_centerInParent="true"
+        app:lottie_loop="true"
+        app:lottie_autoPlay="true"
+        android:id="@+id/lottieAnimationView"
+        android:visibility="gone"/>
+
+
+
+
+</RelativeLayout>

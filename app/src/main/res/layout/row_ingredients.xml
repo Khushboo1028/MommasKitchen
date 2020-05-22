@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="12dp">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_ingredient"
+            android:layout_centerVertical="true"
+            android:id="@+id/img_ingredient"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Paneer"
+            android:fontFamily="@font/sfpro_bold"
+            android:textSize="20dp"
+            android:inputType="textCapWords"
+            android:layout_toRightOf="@id/img_ingredient"
+            android:layout_marginStart="18dp"
+            android:layout_centerVertical="true"
+            android:textColor="@color/colorPrimaryDark"
+            android:id="@+id/tv_ingredient_name"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="200 Grams"
+            android:fontFamily="@font/sfpro_bold"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="24dp"
+            android:layout_centerVertical="true"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="20dp"
+            android:inputType="textCapWords"
+            android:id="@+id/tv_ingredient_quantity"/>
+
+<!--        <View-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="2dp"-->
+<!--            android:layout_below="@id/tv_ingredient_name"-->
+<!--            android:background="@color/light_gray"-->
+<!--            android:layout_marginTop="12dp"/>-->
+
+
+
+
+
+
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

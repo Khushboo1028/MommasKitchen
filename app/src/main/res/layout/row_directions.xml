@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="12dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_ingredient"
+            android:layout_centerVertical="true"
+            android:id="@+id/img_ingredient"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Blend all ingredients together in a bowl. Blend all ingredients together in a bowl"
+            android:fontFamily="@font/sfpro_bold"
+            android:textSize="20dp"
+            android:layout_marginStart="12dp"
+            android:layout_toRightOf="@id/img_ingredient"
+            android:layout_centerVertical="true"
+            android:textColor="@color/colorPrimaryDark"
+            android:id="@+id/tv_direction"/>
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

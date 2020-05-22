@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "803468800193",
+    "firebase_url": "https://momma-s-kitchen.firebaseio.com",
+    "project_id": "momma-s-kitchen",
+    "storage_bucket": "momma-s-kitchen.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:803468800193:android:50b5b1dc8150f83ecea440",
+        "android_client_info": {
+          "package_name": "com.kitchen.mommaskitchen"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "803468800193-ru1kdnt83gee2212m4mdfdc3l58th55c.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kitchen.mommaskitchen",
+            "certificate_hash": "02818f647ce90b5f77f7e1cf97515f85a3acae57"
+          }
+        },
+        {
+          "client_id": "803468800193-ti2osbtd1bn29pvqbtnbl900veffck80.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCYFbp9zYwEJjUWO_NkCoVMFZZHI12AAgo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "803468800193-ti2osbtd1bn29pvqbtnbl900veffck80.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_centerHorizontal="true"
+    android:layout_marginTop="3dp"
+    android:backgroundTint="@android:color/white"
+    android:padding="6dp">
+
+        <com.kitchen.mommaskitchen.Utility.CustomImageView
+            android:id="@+id/recipe_image"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:src="@drawable/pumpkin_soup"
+            android:layout_centerHorizontal="true"
+            android:scaleType="centerCrop" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pumpkin Soup"
+            android:layout_below="@id/recipe_image"
+            android:layout_centerHorizontal="true"
+            android:textColor="@color/colorPrimaryDark"
+            android:fontFamily="@font/sfpro_bold"
+            android:textSize="24dp"
+            android:layout_marginTop="2dp"
+            android:id="@+id/tv_recipe_name"/>
+
+
+
+</RelativeLayout>
