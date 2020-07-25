@@ -6,21 +6,24 @@
     <string name="bottom_navigation_heading_2">Saved</string>
 
     <string name="new_recipes_heading">Latest Recipes</string>
+    <string name="categories_heading">Categories</string>
     <string name="saved_recipes_heading">Saved Recipes</string>
 
-<!--    View Recipe Page-->
+    <!--    View Recipe Page-->
     <string name="tab_bar_heading_1">Ingredients</string>
     <string name="tab_bar_heading_2">Directions</string>
 
-<!-- firebase -->
+    <string name="default_notification_channel_id">NOTIF</string>
 
-<!--    Firebase Collections-->
+    <!-- firebase -->
+
+    <!--    Firebase Collections-->
     <string name="users">users</string>
     <string name="recipes">recipes</string>
     <string name="categories">categories</string>
 
 
-<!--    Firebase Recipe Document Fields-->
+    <!--    Firebase Recipe Document Fields-->
 
     <string name="date_created">date_created</string>
     <string name="ingredients">ingredients</string>
@@ -30,13 +33,16 @@
     <string name="category_id">category_id</string>
     <string name="prep_time">prep_time</string>
     <string name="image_url">image_url</string>
+    <string name="video_url">video_url</string>
 
-<!--    Category Document fields-->
+    <!--    Category Document fields-->
 
     <string name="category_name">name</string>
     <string name="category_image_url">image_url</string>
 
-<!--    User document Fields-->
+    <!--    User document Fields-->
     <string name="saved_recipe_id">recipe_id</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

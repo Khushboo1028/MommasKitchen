@@ -63,7 +63,7 @@ public class SavedFragment extends Fragment {
     ArrayList<ContentsRecipe> latestRecipes;
     String prep_time;
 
-    String date_viewFormat,recipe_image_url,category_id;
+    String date_viewFormat,recipe_image_url,category_id,video_url;
 
     LottieAnimationView lottieAnimationView;
     TextView tv_saved_recipe;
@@ -212,6 +212,12 @@ public class SavedFragment extends Fragment {
                                                                     category_id = doc.getString(mActivity.getString(R.string.category_id));
                                                                 }
 
+                                                                if(doc.get(mActivity.getString(R.string.video_url)) != null){
+                                                                    video_url = doc.getString(mActivity.getString(R.string.video_url));
+                                                                }
+
+
+
 
                                                                 recipeArrayList.add(new ContentsRecipe(
                                                                         recipe_image_url,
@@ -222,7 +228,8 @@ public class SavedFragment extends Fragment {
                                                                         date_viewFormat,
                                                                         portion,
                                                                         category_id,
-                                                                        doc.getId()
+                                                                        doc.getId(),
+                                                                        video_url
 
                                                                 ));
 
@@ -234,7 +241,7 @@ public class SavedFragment extends Fragment {
 
                                                             for(int i = 0;i<recipeArrayList.size();i++){
 
-                                                                if(savedRecipeIDArrayList.contains(recipeArrayList.get(i).getDocument_id())){
+                                                                if(savedRecipeIDArrayList!=null && savedRecipeIDArrayList.contains(recipeArrayList.get(i).getDocument_id())){
                                                                     savedRecipesList.add(recipeArrayList.get(i));
                                                                 }
                                                             }

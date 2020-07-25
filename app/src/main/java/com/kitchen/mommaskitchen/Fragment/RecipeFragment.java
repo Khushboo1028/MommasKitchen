@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -67,10 +68,12 @@ public class RecipeFragment extends Fragment {
     String category_id,category_name,category_image_url;
     String prep_time;
 
-    String date_viewFormat,recipe_image_url;
+    String date_viewFormat,recipe_image_url, video_url;
 
     ArrayList<ContentsCategories> categoriesArrayList;
     EditText searchView;
+
+    NestedScrollView nestedScrollView;
 
 
     @Override
@@ -82,30 +85,13 @@ public class RecipeFragment extends Fragment {
 
 
 
-        relative_layout.setOnClickListener(new View.OnClickListener() {
+        searchView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                InputMethodManager imm = (InputMethodManager)getContext().getSystemService(getContext().INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(et_search.getWindowToken(), 0);
-            }
-        });
-
-
-        searchView.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                filter(s.toString().toLowerCase());
-
+                getFragmentManager()
+                        .beginTransaction()
+                        .add(R.id.fragment_container, new SearchFragment())
+                        .commit();
             }
         });
 
@@ -129,6 +115,7 @@ public class RecipeFragment extends Fragment {
         latestReleaseAdapter = new LatestReleaseAdapter(latestRecipes,getActivity());
         recyclerView.setAdapter(latestReleaseAdapter);
         searchView = view.findViewById(R.id.et_search);
+        searchView.setFocusable(false);
 
         categoryRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerview_vertical);
         categoryRecyclerView.setHasFixedSize(true); //so it doesn't matter if element size increases or decreases
@@ -137,6 +124,8 @@ public class RecipeFragment extends Fragment {
 
         et_search = (EditText) view.findViewById(R.id.et_search);
 
+        nestedScrollView = (NestedScrollView) view.findViewById(R.id.nestedScrollView);
+
 
         relative_layout = (RelativeLayout) view.findViewById(R.id.relative_layout);
 
@@ -144,20 +133,6 @@ public class RecipeFragment extends Fragment {
 
     }
 
-    private void filter(String text) {
-        ArrayList<ContentsCategories> temp = new ArrayList();
-        for (ContentsCategories d : categoriesArrayList) {
-            //or use .equal(text) with you want equal match
-            //use .toLowerCase() for better matches
-
-            if (d.getCategory_name().toLowerCase().contains(text.toLowerCase()) ){
-                temp.add(d);
-            }
-        }
-        //update recyclerview
-        recipeCategoryAdapter.updateList(temp);
-
-    }
 
     public void getRecipes(final Activity mActivity){
 
@@ -216,6 +191,10 @@ public class RecipeFragment extends Fragment {
                                         category_id = doc.getString(mActivity.getString(R.string.category_id));
                                     }
 
+                                    if(doc.get(mActivity.getString(R.string.video_url)) != null){
+                                        video_url = doc.getString(mActivity.getString(R.string.video_url));
+                                    }
+
 
                                     recipeArrayList.add(new ContentsRecipe(
                                             recipe_image_url,
@@ -226,7 +205,8 @@ public class RecipeFragment extends Fragment {
                                             date_viewFormat,
                                             portion,
                                             category_id,
-                                            doc.getId()
+                                            doc.getId(),
+                                            video_url
 
                                     ));
 
