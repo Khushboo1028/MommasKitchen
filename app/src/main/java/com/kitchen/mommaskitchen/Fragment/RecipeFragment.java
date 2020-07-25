@@ -1,6 +1,7 @@
 package com.kitchen.mommaskitchen.Fragment;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -16,10 +17,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.firebase.Timestamp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -30,6 +34,7 @@ import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.kitchen.mommaskitchen.Activity.SearchActivity;
 import com.kitchen.mommaskitchen.Adapter.LatestReleaseAdapter;
 import com.kitchen.mommaskitchen.R;
 import com.kitchen.mommaskitchen.Adapter.RecipeCategoryAdapter;
@@ -46,7 +51,7 @@ public class RecipeFragment extends Fragment {
     public static final String TAG = "RecipeFragment";
     private RecyclerView recyclerView;
     private LatestReleaseAdapter latestReleaseAdapter;
-    private ArrayList<String> stringArrayList;
+    ArrayList<String> savedRecipeArrayList;
 
     private RecyclerView categoryRecyclerView;
     private RecipeCategoryAdapter recipeCategoryAdapter;
@@ -75,6 +80,11 @@ public class RecipeFragment extends Fragment {
 
     NestedScrollView nestedScrollView;
 
+    FirebaseAuth mAuth;
+    FirebaseUser firebaseUser;
+
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -88,14 +98,18 @@ public class RecipeFragment extends Fragment {
         searchView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getFragmentManager()
-                        .beginTransaction()
-                        .add(R.id.fragment_container, new SearchFragment())
-                        .commit();
+//                getFragmentManager()
+//                        .beginTransaction()
+//                        .add(R.id.fragment_container, new SearchFragment())
+//                        .commit();
+
+                Intent intent = new Intent(getContext(), SearchActivity.class);
+                startActivity(intent);
+                getActivity().overridePendingTransition(0,0);
             }
         });
 
-        getRecipes(getActivity());
+        getSavedRecipes(getActivity());
         getCategories();
 
 
@@ -111,6 +125,7 @@ public class RecipeFragment extends Fragment {
         recipeArrayList = new ArrayList<>();
         latestRecipes = new ArrayList<>();
         categoriesArrayList = new ArrayList<>();
+        savedRecipeArrayList = new ArrayList<>();
         recyclerView.setHasFixedSize(true); //so it doesn't matter if element size increases or decreases
         latestReleaseAdapter = new LatestReleaseAdapter(latestRecipes,getActivity());
         recyclerView.setAdapter(latestReleaseAdapter);
@@ -130,6 +145,8 @@ public class RecipeFragment extends Fragment {
         relative_layout = (RelativeLayout) view.findViewById(R.id.relative_layout);
 
         db = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+        firebaseUser = mAuth.getCurrentUser();
 
     }
 
@@ -196,6 +213,12 @@ public class RecipeFragment extends Fragment {
                                     }
 
 
+                                    Boolean isSaved;
+                                    if(savedRecipeArrayList.contains(doc.getId())){
+                                        isSaved = true;
+                                    }else{
+                                        isSaved = false;
+                                    }
                                     recipeArrayList.add(new ContentsRecipe(
                                             recipe_image_url,
                                             recipe_name,
@@ -206,7 +229,8 @@ public class RecipeFragment extends Fragment {
                                             portion,
                                             category_id,
                                             doc.getId(),
-                                            video_url
+                                            video_url,
+                                            isSaved
 
                                     ));
 
@@ -258,6 +282,35 @@ public class RecipeFragment extends Fragment {
                     }
                 });
 
+    }
+
+    public void getSavedRecipes( final Activity mActivity) {
+
+        if (firebaseUser != null) {
+            listenerRegistration = db.collection(mActivity.getString(R.string.users)).document(firebaseUser.getUid())
+                    .addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                        @Override
+                        public void onEvent(@Nullable DocumentSnapshot snapshot, @Nullable FirebaseFirestoreException e) {
+                            if (e != null) {
+                                Log.i(TAG, "An error occurred in recovering saved ID'S " + e.getMessage());
+                            } else {
+
+                                if (snapshot != null && snapshot.exists()) {
+                                    Log.d(TAG, "Current data: " + snapshot.getData());
+
+                                    savedRecipeArrayList = (ArrayList<String>) snapshot.get(mActivity.getString(R.string.saved_recipe_id));
+                                    getRecipes(mActivity);
+                                } else {
+                                    Log.d(TAG, "Current data: null");
+                                }
+
+
+                            }
+
+                        }
+                    });
+
+        }
     }
 
     @Override

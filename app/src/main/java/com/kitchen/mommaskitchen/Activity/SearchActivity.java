@@ -1,21 +1,17 @@
-package com.kitchen.mommaskitchen.Fragment;
-
-import android.app.Activity;
-import android.content.Context;
-import android.os.Bundle;
+package com.kitchen.mommaskitchen.Activity;
 
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
+import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
@@ -26,22 +22,17 @@ import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.kitchen.mommaskitchen.Adapter.LatestReleaseAdapter;
 import com.kitchen.mommaskitchen.Adapter.SearchRecipeAdapter;
 import com.kitchen.mommaskitchen.R;
-import com.kitchen.mommaskitchen.Utility.ContentsCategories;
 import com.kitchen.mommaskitchen.Utility.ContentsRecipe;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class SearchFragment extends Fragment {
+public class SearchActivity extends AppCompatActivity {
 
-    public static final String TAG = "SearchFragment";
-    private View view;
-
-
+    public static final String TAG = "SearchActivity";
     private EditText et_search;
 
     private RecyclerView recyclerView;
@@ -52,22 +43,17 @@ public class SearchFragment extends Fragment {
     ArrayList<ContentsRecipe> recipeArrayList;
 
     String recipe_name, category_id, prep_time, date_viewFormat, recipe_image_url, video_url;
+    ImageView back;
 
     Map<String, Map<String, Object>> ingredients;
     ArrayList<String> directions;
     Timestamp date_created;
     Map<String, Object> portion;
 
-
-    public SearchFragment() {
-        // Required empty public constructor
-    }
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        view = inflater.inflate(R.layout.fragment_search, container, false);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_search);
 
         init();
 
@@ -88,23 +74,29 @@ public class SearchFragment extends Fragment {
             }
         });
 
-        getRecipes(getActivity());
-
-
-        return view;
+        getRecipes(SearchActivity.this);
     }
 
     private void init() {
-        et_search = (EditText) view.findViewById(R.id.et_search);
+        et_search = (EditText) findViewById(R.id.et_search);
+        et_search.requestFocus();
+        back = (ImageView) findViewById(R.id.back);
 
-        recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_search);
+        recyclerView = (RecyclerView) findViewById(R.id.recycler_view_search);
         recyclerView.setHasFixedSize(true);
         recipeArrayList = new ArrayList<>();
 
-        searchRecipeAdapter = new SearchRecipeAdapter(recipeArrayList,getActivity());
+        searchRecipeAdapter = new SearchRecipeAdapter(recipeArrayList,SearchActivity.this);
         recyclerView.setAdapter(searchRecipeAdapter);
 
         db = FirebaseFirestore.getInstance();
+
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
 
 
     }
@@ -112,14 +104,11 @@ public class SearchFragment extends Fragment {
     private void filter(String text) {
         ArrayList<ContentsRecipe> temp = new ArrayList();
         for (ContentsRecipe d : recipeArrayList) {
-            //or use .equal(text) with you want equal match
-            //use .toLowerCase() for better matches
 
             if (d.getRecipe_name().toLowerCase().contains(text.toLowerCase())) {
                 temp.add(d);
             }
         }
-        //update recyclerview
         searchRecipeAdapter.updateList(temp);
 
     }
@@ -196,7 +185,8 @@ public class SearchFragment extends Fragment {
                                             portion,
                                             category_id,
                                             doc.getId(),
-                                            video_url
+                                            video_url,
+                                            false
 
                                     ));
 
@@ -222,5 +212,11 @@ public class SearchFragment extends Fragment {
         if (listenerRegistration != null) {
             listenerRegistration = null;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 }

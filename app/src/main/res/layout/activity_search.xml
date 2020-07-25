@@ -6,19 +6,30 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     android:padding="10dp"
-    tools:context=".Fragment.SearchFragment">
+    tools:context=".Activity.SearchActivity">
 
-
+<androidx.core.widget.NestedScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
     <RelativeLayout
         android:id="@+id/main_rel"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+
+        <ImageView
+            android:id="@+id/back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:src="@drawable/ic_back" />
+
         <RelativeLayout
             android:id="@+id/search_rel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp">
+            android:layout_marginTop="6dp"
+            android:layout_below="@id/back">
 
             <EditText
                 android:id="@+id/et_search"
@@ -46,15 +57,16 @@
 
 
         <TextView
-            android:id="@+id/tv_results"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text="@string/new_recipes_heading"
+            android:layout_marginStart="8dp"
             android:layout_below="@id/search_rel"
-            android:fontFamily="@font/sfpro_regular"
-            android:text="Latest Recipes"
-            android:layout_marginTop="16dp"
-            android:textColor="@color/black"
-            android:textSize="24dp" />
+            android:layout_marginTop="24dp"
+            android:textColor="@color/colorPrimaryDark"
+            android:fontFamily="@font/sfpro_bold"
+            android:textSize="24dp"
+            android:id="@+id/tv_results"/>
 
 
         <androidx.recyclerview.widget.RecyclerView
@@ -83,5 +95,5 @@
 
     </RelativeLayout>
 
-
+</androidx.core.widget.NestedScrollView>
 </RelativeLayout>

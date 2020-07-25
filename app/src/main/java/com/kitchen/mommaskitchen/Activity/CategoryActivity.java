@@ -63,7 +63,7 @@ public class CategoryActivity extends AppCompatActivity {
             }
         }
 
-        recipeAdapter = new RecipeAdapter(recipes_in_category_list,this);
+        recipeAdapter = new RecipeAdapter(recipes_in_category_list,this, false);
         recyclerView.setAdapter(recipeAdapter);
 
         back.setOnClickListener(new View.OnClickListener() {

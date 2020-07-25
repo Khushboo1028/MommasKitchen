@@ -229,7 +229,8 @@ public class SavedFragment extends Fragment {
                                                                         portion,
                                                                         category_id,
                                                                         doc.getId(),
-                                                                        video_url
+                                                                        video_url,
+                                                                        true
 
                                                                 ));
 
@@ -246,7 +247,7 @@ public class SavedFragment extends Fragment {
                                                                 }
                                                             }
 
-                                                            recipeAdapter = new RecipeAdapter(savedRecipesList,getActivity());
+                                                            recipeAdapter = new RecipeAdapter(savedRecipesList,getActivity(), true);
                                                             recyclerView.setAdapter(recipeAdapter);
 
                                                             if(savedRecipesList.isEmpty()){

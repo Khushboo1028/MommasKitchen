@@ -17,25 +17,25 @@ import android.view.View;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.snackbar.Snackbar;
-<<<<<<< HEAD
+
 import com.google.android.play.core.appupdate.AppUpdateManager;
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory;
-=======
+
 import com.google.android.play.core.appupdate.AppUpdateInfo;
 import com.google.android.play.core.appupdate.AppUpdateManager;
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory;
 import com.google.android.play.core.appupdate.testing.FakeAppUpdateManager;
->>>>>>> b2c2ef92f25cf35a680cc6ffd02617cfb45401aa
+
 import com.google.android.play.core.install.InstallState;
 import com.google.android.play.core.install.InstallStateUpdatedListener;
 import com.google.android.play.core.install.model.AppUpdateType;
 import com.google.android.play.core.install.model.InstallStatus;
 import com.google.android.play.core.install.model.UpdateAvailability;
-<<<<<<< HEAD
-=======
+
+
 import com.google.android.play.core.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
->>>>>>> b2c2ef92f25cf35a680cc6ffd02617cfb45401aa
+
 import com.kitchen.mommaskitchen.R;
 import com.kitchen.mommaskitchen.Fragment.RecipeFragment;
 import com.kitchen.mommaskitchen.Fragment.SavedFragment;
@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         Snackbar snackbar =
                 Snackbar.make(
                         findViewById(R.id.main_rel),
-                        "New app is ready!",
+                        "Momma's Kitchen is updated!",
                         Snackbar.LENGTH_INDEFINITE);
 
         snackbar.setAction("Install", view -> {
@@ -150,18 +150,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         AnonymousSignIn anonymousSignIn = new AnonymousSignIn();
         anonymousSignIn.login(this);
 
-//        FakeAppUpdateManager fakeAppUpdateManager = new FakeAppUpdateManager(this);
-//        fakeAppUpdateManager.setUpdateAvailable(1); // add app version code greater than current version.
-//        fakeAppUpdateManager.getAppUpdateInfo().addOnSuccessListener(new OnSuccessListener<AppUpdateInfo>() {
-//            @Override
-//            public void onSuccess(AppUpdateInfo appUpdateInfo) {
-//                if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
-//                        && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)) {
-//                    System.out.println("checkForAppUpdateAvailability");
-//                    popupSnackbarForCompleteUpdate();
-//                }
-//            }
-//        });
 
         installStateUpdatedListener = new InstallStateUpdatedListener() {
             @Override

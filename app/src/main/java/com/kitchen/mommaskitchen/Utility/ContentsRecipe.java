@@ -16,8 +16,9 @@ public class ContentsRecipe implements Serializable {
     String category_id;
     String document_id;
     String video_url;
+    Boolean isSaved;
 
-    public ContentsRecipe(String image_url, String recipe_name, String prep_time, Map<String, Map<String, Object>> ingredients, ArrayList<String> directions, String date_created, Map<String, Object> portion, String category_id, String document_id, String video_url) {
+    public ContentsRecipe(String image_url, String recipe_name, String prep_time, Map<String, Map<String, Object>> ingredients, ArrayList<String> directions, String date_created, Map<String, Object> portion, String category_id, String document_id, String video_url, Boolean isSaved) {
         this.image_url = image_url;
         this.recipe_name = recipe_name;
         this.prep_time = prep_time;
@@ -28,6 +29,7 @@ public class ContentsRecipe implements Serializable {
         this.category_id = category_id;
         this.document_id = document_id;
         this.video_url = video_url;
+        this.isSaved = isSaved;
     }
 
     public String getPrep_time() {
@@ -108,5 +110,13 @@ public class ContentsRecipe implements Serializable {
 
     public void setVideo_url(String video_url) {
         this.video_url = video_url;
+    }
+
+    public Boolean getSaved() {
+        return isSaved;
+    }
+
+    public void setSaved(Boolean saved) {
+        isSaved = saved;
     }
 }

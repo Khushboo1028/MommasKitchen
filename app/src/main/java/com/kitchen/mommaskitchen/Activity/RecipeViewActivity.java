@@ -1,6 +1,7 @@
 package com.kitchen.mommaskitchen.Activity;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
@@ -26,8 +27,11 @@ import com.google.android.youtube.player.YouTubePlayerView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.kitchen.mommaskitchen.Fragment.DirectionsFragment;
 import com.kitchen.mommaskitchen.Fragment.IngredientsFragment;
 import com.kitchen.mommaskitchen.R;
@@ -62,12 +66,15 @@ public class RecipeViewActivity extends AppCompatActivity {
     String video_url;
 
     ArrayList<ContentsRecipe> recipeDetails;
+    ArrayList<String> savedRecipeArrayList;
     int pos;
     Boolean FULL_SCREEN_FLAG = false;
 
     String portion_size,portion_unit;
 
     RelativeLayout youtube_rel,image_rel;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -210,6 +217,7 @@ public class RecipeViewActivity extends AppCompatActivity {
 
         setData();
 
+        getSavedRecipes(RecipeViewActivity.this);
 
 
         if (video_url.equals("")){
@@ -279,6 +287,7 @@ public class RecipeViewActivity extends AppCompatActivity {
         youtube_rel = (RelativeLayout) findViewById(R.id.youtube_rel);
         image_rel = (RelativeLayout) findViewById(R.id.image_rel);
 
+        savedRecipeArrayList = new ArrayList<>();
 
         youtubeFragment = (YouTubePlayerFragment)
                 getFragmentManager().findFragmentById(R.id.youtubeFragment);
@@ -417,6 +426,40 @@ public class RecipeViewActivity extends AppCompatActivity {
             });
         }
     }
+
+    public void getSavedRecipes( final Activity mActivity) {
+
+        if (firebaseUser != null) {
+            db.collection(mActivity.getString(R.string.users)).document(firebaseUser.getUid())
+                    .get()
+                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot snapshot) {
+                            if (snapshot != null && snapshot.exists()) {
+                                Log.d(TAG, "Current data: " + snapshot.getData());
+
+                                savedRecipeArrayList = (ArrayList<String>) snapshot.get(mActivity.getString(R.string.saved_recipe_id));
+                                if(savedRecipeArrayList.contains(recipeDetails.get(pos).getDocument_id())){
+                                    bookmark.setImageResource(R.drawable.ic_bookmark_checked);
+                                }else{
+                                    bookmark.setImageResource(R.drawable.ic_bookmark_unchecked);
+                                }
+                            } else {
+                                Log.d(TAG, "Current data: null");
+                            }
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.i(TAG,"An error occurred "+e.getLocalizedMessage());
+                        }
+                    });
+
+
+        }
+    }
+
 
     @Override
     protected void onDestroy() {
