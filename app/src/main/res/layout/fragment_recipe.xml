@@ -11,7 +11,8 @@
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:id="@+id/nestedScrollView">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -28,6 +29,8 @@
                 android:background="@drawable/bottom_navigation_background"
                 android:backgroundTint="#1C000000"
                 android:maxLines="1"
+                android:imeOptions="actionSearch"
+                android:hint="Search"
                 android:fontFamily="@font/sfpro_regular"
                 android:textColor="@color/colorPrimaryDark"
                 android:paddingStart="24dp"
@@ -96,10 +99,22 @@
 
         </RelativeLayout>
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/categories_heading"
+            android:layout_marginStart="4dp"
+            android:layout_below="@id/threedots_rel"
+            android:layout_marginTop="24dp"
+            android:textColor="@color/colorPrimaryDark"
+            android:fontFamily="@font/sfpro_bold"
+            android:textSize="24dp"
+            android:id="@+id/tv_categories"/>
+
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/threedots_rel"
+            android:layout_below="@id/tv_categories"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="100dp"
             android:layout_marginTop="12dp"

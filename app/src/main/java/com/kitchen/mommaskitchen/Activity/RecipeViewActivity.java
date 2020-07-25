@@ -11,12 +11,18 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.tabs.TabLayout;
+import com.google.android.youtube.player.YouTubeBaseActivity;
+import com.google.android.youtube.player.YouTubeInitializationResult;
+import com.google.android.youtube.player.YouTubePlayer;
+import com.google.android.youtube.player.YouTubePlayerFragment;
+import com.google.android.youtube.player.YouTubePlayerView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -43,7 +49,7 @@ public class RecipeViewActivity extends AppCompatActivity {
     TextView tv_minus, tv_plus, tv_portions, tv_recipe_prep_time, tv_portion_size,tv_recipe_name,tv_portion_makes;
     int tab_position;
     int portions = 1;
-    ImageView back;
+    ImageView back, back_img;
     Fragment fragment;
     boolean is_bookmarked = false;
 
@@ -51,10 +57,17 @@ public class RecipeViewActivity extends AppCompatActivity {
     FirebaseUser firebaseUser;
     FirebaseFirestore db;
 
+    YouTubePlayer activePlayer;
+    YouTubePlayerFragment youtubeFragment;
+    String video_url;
+
     ArrayList<ContentsRecipe> recipeDetails;
     int pos;
+    Boolean FULL_SCREEN_FLAG = false;
 
     String portion_size,portion_unit;
+
+    RelativeLayout youtube_rel,image_rel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -166,6 +179,12 @@ public class RecipeViewActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
+        back_img.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
 
         if(is_bookmarked == true){
             bookmark.setImageResource(R.drawable.ic_bookmark_checked);
@@ -192,6 +211,52 @@ public class RecipeViewActivity extends AppCompatActivity {
         setData();
 
 
+
+        if (video_url.equals("")){
+            youtube_rel.setVisibility(View.GONE);
+            image_rel.setVisibility(View.VISIBLE);
+        }else{
+            image_rel.setVisibility(View.GONE);
+            youtube_rel.setVisibility(View.VISIBLE);
+            youtubeFragment.initialize("AIzaSyD70aNotNwhQoRmECQz2m8S7aYlUgXCvo4",
+                    new YouTubePlayer.OnInitializedListener() {
+                        @Override
+                        public void onInitializationSuccess(YouTubePlayer.Provider provider,
+                                                            YouTubePlayer youTubePlayer, boolean b) {
+                            // do any work here to cue video, play video, etc.
+                            activePlayer = youTubePlayer;
+                            String url_cue = video_url.substring(video_url.lastIndexOf("?v=")+3);
+//                        url_cue="FTDrr4ZpijU";
+                            activePlayer.cueVideo(url_cue);
+
+                            activePlayer.setOnFullscreenListener(new YouTubePlayer.OnFullscreenListener() {
+                                @Override
+                                public void onFullscreen(boolean b) {
+                                    FULL_SCREEN_FLAG =b;
+                                }
+                            });
+
+
+//                        youTubePlayer.cueVideo("5xVh-7ywKpE");
+                        }
+                        @Override
+                        public void onInitializationFailure(YouTubePlayer.Provider provider,
+                                                            YouTubeInitializationResult youTubeInitializationResult) {
+
+                            Log.i(TAG,"FAILURE RESULT: "+youTubeInitializationResult.name());
+                        }
+                    });
+
+
+        }
+
+
+
+
+
+
+
+
     }
 
     private void init(){
@@ -204,11 +269,19 @@ public class RecipeViewActivity extends AppCompatActivity {
         tv_minus = (TextView) findViewById(R.id.tv_minus);
         tv_plus = (TextView) findViewById(R.id.tv_plus);
         back = (ImageView) findViewById(R.id.back);
+        back_img=(ImageView) findViewById(R.id.back_img);
         bookmark = (ImageView) findViewById(R.id.bookmark);
         tv_recipe_name = (TextView) findViewById(R.id.tv_recipe_name);
         tv_portion_makes = (TextView) findViewById(R.id.tv_portion_makes);
         recipeDetails = (ArrayList<ContentsRecipe>) getIntent().getSerializableExtra("recipeArrayList");
         pos = getIntent().getIntExtra("position",0);
+
+        youtube_rel = (RelativeLayout) findViewById(R.id.youtube_rel);
+        image_rel = (RelativeLayout) findViewById(R.id.image_rel);
+
+
+        youtubeFragment = (YouTubePlayerFragment)
+                getFragmentManager().findFragmentById(R.id.youtubeFragment);
 
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
@@ -220,6 +293,7 @@ public class RecipeViewActivity extends AppCompatActivity {
         switch (portion){
             case 1:
                 tv_portions.setText("Portions(1)");
+
                 img_portions.setImageResource(R.drawable.ic_bowl_1);
                 tv_portion_makes.setText(String.valueOf(portion) +" portion = " + portion_size + " " + portion_unit);
                 break;
@@ -293,6 +367,11 @@ public class RecipeViewActivity extends AppCompatActivity {
         if(recipeDetails.get(pos).getPrep_time() != null){
             tv_recipe_prep_time.setText(recipeDetails.get(pos).getPrep_time());
         }
+        if(recipeDetails.get(pos).getVideo_url() != null){
+            video_url = recipeDetails.get(pos).getVideo_url();
+        }else{
+            video_url = "";
+        }
 
         if (recipeDetails.get(pos).getPortion() != null){
             Map<String,Object> portion = recipeDetails.get(pos).getPortion();
@@ -348,6 +427,19 @@ public class RecipeViewActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        finish();
+        if (FULL_SCREEN_FLAG){
+            activePlayer.setFullscreen(false);
+        }else{
+            finish();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(activePlayer!=null){
+            activePlayer.release();
+            activePlayer=null;
+        }
     }
 }

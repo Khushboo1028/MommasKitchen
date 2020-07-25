@@ -46,6 +46,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
     FirebaseUser firebaseUser;
     ArrayList<String> savedRecipeArrayList;
     ListenerRegistration listenerRegistration;
+
     public RecipeAdapter(ArrayList<ContentsRecipe> recipeArrayList, Activity mActivity) {
         this.recipeArrayList = recipeArrayList;
         this.mActivity = mActivity;
@@ -59,9 +60,9 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        LayoutInflater layoutInflater=LayoutInflater.from(mActivity.getApplicationContext());
-        View view=layoutInflater.inflate(R.layout.row_recipe_saved,null);
-        ViewHolder holder=new ViewHolder(view);
+        LayoutInflater layoutInflater = LayoutInflater.from(mActivity.getApplicationContext());
+        View view = layoutInflater.inflate(R.layout.row_recipe_saved, null);
+        ViewHolder holder = new ViewHolder(view);
         return holder;
     }
 
@@ -73,26 +74,25 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
 
         holder.tv_recipe_name.setText(contentsRecipe.getRecipe_name());
 
-        getSavedRecipes(holder.bookmark,contentsRecipe);
-
+        getSavedRecipes(holder.bookmark, contentsRecipe);
 
 
         holder.bookmark.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(is_bookmarked == true){
+                if (is_bookmarked == true) {
                     is_bookmarked = false;
                     holder.bookmark.setImageResource(R.drawable.ic_bookmark_unchecked);
-                    saveRecipe(contentsRecipe,false);
+                    saveRecipe(contentsRecipe, false);
 
 
-                  //  removeAt(i);
+                    //  removeAt(i);
 
 
-                }else{
+                } else {
                     is_bookmarked = true;
                     holder.bookmark.setImageResource(R.drawable.ic_bookmark_checked);
-                    saveRecipe(contentsRecipe,true);
+                    saveRecipe(contentsRecipe, true);
                 }
             }
         });
@@ -102,8 +102,8 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(mActivity, RecipeViewActivity.class);
-                intent.putExtra("position",i);
-                intent.putExtra("recipeArrayList",recipeArrayList);
+                intent.putExtra("position", i);
+                intent.putExtra("recipeArrayList", recipeArrayList);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 mActivity.startActivity(intent);
             }
@@ -116,7 +116,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
         return recipeArrayList.size();
     }
 
-    public void updateList(ArrayList<ContentsRecipe> list){
+    public void updateList(ArrayList<ContentsRecipe> list) {
         recipeArrayList = list;
         notifyDataSetChanged();
     }
@@ -136,20 +136,20 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            recipe_image = (CustomImageView)itemView.findViewById(R.id.recipe_image);
+            recipe_image = (CustomImageView) itemView.findViewById(R.id.recipe_image);
             tv_recipe_name = (TextView) itemView.findViewById(R.id.tv_recipe_name);
             bookmark = (ImageView) itemView.findViewById(R.id.bookmark);
         }
     }
 
-    private void saveRecipe(ContentsRecipe contentsRecipe, Boolean is_bookmarked){
+    private void saveRecipe(ContentsRecipe contentsRecipe, Boolean is_bookmarked) {
 
-        if(firebaseUser!=null){
+        if (firebaseUser != null) {
 
             final Map<String, Object> docData = new HashMap<>();
-            if(is_bookmarked){
+            if (is_bookmarked) {
                 docData.put(mActivity.getString(R.string.saved_recipe_id), FieldValue.arrayUnion(contentsRecipe.getDocument_id()));
-            }else{
+            } else {
                 docData.put(mActivity.getString(R.string.saved_recipe_id), FieldValue.arrayRemove(contentsRecipe.getDocument_id()));
 
             }
@@ -159,43 +159,41 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
             docRef.update(docData).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
-                    Log.i(TAG,"Recipe is updated in users favourites");
+                    Log.i(TAG, "Recipe is updated in users favourites");
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    Log.i(TAG,"Recipe could not be saved in users favourites "+e.getMessage());
+                    Log.i(TAG, "Recipe could not be saved in users favourites " + e.getMessage());
                 }
             });
         }
     }
 
-    public void getSavedRecipes(final ImageView imageView, final ContentsRecipe contentsRecipe){
+    public void getSavedRecipes(final ImageView imageView, final ContentsRecipe contentsRecipe) {
 
-        if(firebaseUser!=null){
+        if (firebaseUser != null) {
             listenerRegistration = db.collection(mActivity.getString(R.string.users)).document(firebaseUser.getUid())
                     .addSnapshotListener(new EventListener<DocumentSnapshot>() {
                         @Override
                         public void onEvent(@Nullable DocumentSnapshot snapshot, @Nullable FirebaseFirestoreException e) {
-                            if(e!=null){
-                                Log.i(TAG,"An error occurred in recovering saved ID'S " +e.getMessage());
-                            }else{
+                            if (e != null) {
+                                Log.i(TAG, "An error occurred in recovering saved ID'S " + e.getMessage());
+                            } else {
 
                                 if (snapshot != null && snapshot.exists()) {
                                     Log.d(TAG, "Current data: " + snapshot.getData());
 
                                     savedRecipeArrayList = (ArrayList<String>) snapshot.get(mActivity.getString(R.string.saved_recipe_id));
-                                    Log.i(TAG,"savedRecipeArrayList: "+savedRecipeArrayList)
-                                    ;                                if(savedRecipeArrayList.contains(contentsRecipe.getDocument_id())){
+                                    if (savedRecipeArrayList!=null && savedRecipeArrayList.contains(contentsRecipe.getDocument_id())) {
                                         imageView.setImageResource(R.drawable.ic_bookmark_checked);
-                                    }else{
+                                    } else {
                                         //imageView.setImageResource(R.drawable.ic_bookmark_unchecked);
 
                                     }
                                 } else {
                                     Log.d(TAG, "Current data: null");
                                 }
-
 
 
                             }

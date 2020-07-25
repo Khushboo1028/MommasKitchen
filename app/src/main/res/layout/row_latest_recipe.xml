@@ -12,18 +12,19 @@
             android:layout_width="120dp"
             android:layout_height="200dp"
             android:layout_centerHorizontal="true"
-
             android:scaleType="centerCrop" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:scrollHorizontally="false"
+            android:gravity="center"
             android:text="Pumpkin Soup"
             android:layout_below="@id/recipe_image"
-            android:layout_centerHorizontal="true"
+            android:layout_alignLeft="@id/recipe_image"
+            android:layout_alignRight="@id/recipe_image"
             android:textColor="@color/colorPrimaryDark"
             android:fontFamily="@font/sfpro_bold"
-            android:inputType="textCapWords"
-            android:textSize="14dp"
+            android:textSize="16dp"
             android:layout_marginTop="2dp"
             android:id="@+id/tv_recipe_name"/>
 
