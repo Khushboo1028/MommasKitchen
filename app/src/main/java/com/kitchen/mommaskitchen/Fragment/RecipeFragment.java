@@ -137,7 +137,6 @@ public class RecipeFragment extends Fragment {
         recipeCategoryAdapter = new RecipeCategoryAdapter(categoriesArrayList,recipeArrayList,getActivity());
         categoryRecyclerView.setAdapter(recipeCategoryAdapter);
 
-        et_search = (EditText) view.findViewById(R.id.et_search);
 
         nestedScrollView = (NestedScrollView) view.findViewById(R.id.nestedScrollView);
 
@@ -214,8 +213,13 @@ public class RecipeFragment extends Fragment {
 
 
                                     Boolean isSaved;
-                                    if(savedRecipeArrayList.contains(doc.getId())){
-                                        isSaved = true;
+
+                                    if(savedRecipeArrayList!=null && !savedRecipeArrayList.isEmpty()) {
+                                        if (savedRecipeArrayList.contains(doc.getId())) {
+                                            isSaved = true;
+                                        } else {
+                                            isSaved = false;
+                                        }
                                     }else{
                                         isSaved = false;
                                     }

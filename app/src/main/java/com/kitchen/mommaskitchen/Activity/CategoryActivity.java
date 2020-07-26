@@ -3,6 +3,7 @@ package com.kitchen.mommaskitchen.Activity;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -73,23 +74,16 @@ public class CategoryActivity extends AppCompatActivity {
             }
         });
 
-        et_search.addTextChangedListener(new TextWatcher() {
+
+        et_search.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                filter(s.toString().toLowerCase());
-
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
+                startActivity(intent);
+                overridePendingTransition(0,0);
             }
         });
+
     }
 
     private void init(){
@@ -100,6 +94,7 @@ public class CategoryActivity extends AppCompatActivity {
         recyclerView = (RecyclerView) findViewById(R.id.recyclerview_vertical);
         recyclerView.setHasFixedSize(true); //so it doesn't matter if element size increases or decreases
         et_search = (EditText) findViewById(R.id.et_search);
+        et_search.setFocusable(false);
 
         tv_saved_recipe = (TextView) findViewById(R.id.tv_saved_recipe);
         back = (ImageView) findViewById(R.id.back);

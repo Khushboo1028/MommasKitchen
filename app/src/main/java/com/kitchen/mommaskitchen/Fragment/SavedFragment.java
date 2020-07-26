@@ -1,6 +1,7 @@
 package com.kitchen.mommaskitchen.Fragment;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -30,6 +31,7 @@ import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.kitchen.mommaskitchen.Activity.SearchActivity;
 import com.kitchen.mommaskitchen.R;
 import com.kitchen.mommaskitchen.Adapter.RecipeAdapter;
 import com.kitchen.mommaskitchen.Utility.ContentsRecipe;
@@ -75,29 +77,16 @@ public class SavedFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_saved, container, false);
         init();
 
+        getSavedRecipes(getActivity());
 
-
-
-
-        et_search.addTextChangedListener(new TextWatcher() {
+        et_search.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                filter(s.toString().toLowerCase());
-
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), SearchActivity.class);
+                startActivity(intent);
+                getActivity().overridePendingTransition(0,0);
             }
         });
-
-        getSavedRecipes(getActivity());
 
 
         return view;
@@ -114,6 +103,7 @@ public class SavedFragment extends Fragment {
 
 
         et_search = (EditText) view.findViewById(R.id.et_search);
+        et_search.setFocusable(false);
         tv_saved_recipe = (TextView) view.findViewById(R.id.tv_saved_recipe);
         top_heading = (TextView) view.findViewById(R.id.top_heading);
         top_heading.setVisibility(View.GONE);

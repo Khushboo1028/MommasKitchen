@@ -439,11 +439,15 @@ public class RecipeViewActivity extends AppCompatActivity {
                                 Log.d(TAG, "Current data: " + snapshot.getData());
 
                                 savedRecipeArrayList = (ArrayList<String>) snapshot.get(mActivity.getString(R.string.saved_recipe_id));
-                                if(savedRecipeArrayList.contains(recipeDetails.get(pos).getDocument_id())){
-                                    bookmark.setImageResource(R.drawable.ic_bookmark_checked);
-                                }else{
-                                    bookmark.setImageResource(R.drawable.ic_bookmark_unchecked);
+
+                                if(savedRecipeArrayList!=null && !savedRecipeArrayList.isEmpty()){
+                                    if(savedRecipeArrayList.contains(recipeDetails.get(pos).getDocument_id())){
+                                        bookmark.setImageResource(R.drawable.ic_bookmark_checked);
+                                    }else{
+                                        bookmark.setImageResource(R.drawable.ic_bookmark_unchecked);
+                                    }
                                 }
+
                             } else {
                                 Log.d(TAG, "Current data: null");
                             }
