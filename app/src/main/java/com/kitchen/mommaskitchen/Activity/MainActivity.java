@@ -21,6 +21,8 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.android.play.core.appupdate.AppUpdateManager;
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory;
 
+import com.google.android.play.core.appupdate.AppUpdateManager;
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory;
 import com.google.android.play.core.appupdate.AppUpdateInfo;
 import com.google.android.play.core.appupdate.AppUpdateManager;
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory;
@@ -36,6 +38,8 @@ import com.google.android.play.core.install.model.UpdateAvailability;
 import com.google.android.play.core.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 
+import com.google.android.play.core.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.kitchen.mommaskitchen.R;
 import com.kitchen.mommaskitchen.Fragment.RecipeFragment;
 import com.kitchen.mommaskitchen.Fragment.SavedFragment;
