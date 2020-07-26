@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -13,6 +14,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -44,9 +46,9 @@ import java.util.Map;
 public class RecipeViewActivity extends AppCompatActivity {
 
     public static final String TAG = "RecipeViewActivity";
-    ImageView top_image, img_portions,bookmark;
+    ImageView top_image, img_portions, bookmark;
     TabLayout tabLayout;
-    TextView tv_minus, tv_plus, tv_portions, tv_recipe_prep_time, tv_portion_size,tv_recipe_name,tv_portion_makes;
+    TextView tv_minus, tv_plus, tv_portions, tv_recipe_prep_time, tv_portion_size, tv_recipe_name, tv_portion_makes;
     int tab_position;
     int portions = 1;
     ImageView back, back_img;
@@ -65,16 +67,16 @@ public class RecipeViewActivity extends AppCompatActivity {
     int pos;
     Boolean FULL_SCREEN_FLAG = false;
 
-    String portion_size,portion_unit;
+    String portion_size, portion_unit;
 
-    RelativeLayout youtube_rel,image_rel;
+    RelativeLayout youtube_rel, image_rel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         DefaultTextConfig defaultTextConfig = new DefaultTextConfig();
         defaultTextConfig.adjustFontScale(getResources().getConfiguration(), RecipeViewActivity.this);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(R.layout.activity_recipe_view);
 
@@ -92,7 +94,7 @@ public class RecipeViewActivity extends AppCompatActivity {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 tab_position = tab.getPosition();
-                Log.i(TAG, "Current tab position is " +tab_position);
+                Log.i(TAG, "Current tab position is " + tab_position);
 
                 switch (tab_position) {
 
@@ -107,7 +109,7 @@ public class RecipeViewActivity extends AppCompatActivity {
                     case 1:
                         fragment = new DirectionsFragment();
                         Bundle bundle1 = new Bundle();
-                        bundle1.putStringArrayList("directions",recipeDetails.get(pos).getDirections());
+                        bundle1.putStringArrayList("directions", recipeDetails.get(pos).getDirections());
                         fragment.setArguments(bundle1);
                         break;
                 }
@@ -143,7 +145,6 @@ public class RecipeViewActivity extends AppCompatActivity {
                 loadFragment(fragment);
 
 
-
             }
         });
 
@@ -151,12 +152,12 @@ public class RecipeViewActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                if(portions <= 1){
+                if (portions <= 1) {
                     portions = 1;
                     calculatePortion(portions);
 
-                }else{
-                     Log.i(TAG, "Portions is "+portions);
+                } else {
+                    Log.i(TAG, "Portions is " + portions);
                     calculatePortion(portions--);
 
 
@@ -186,21 +187,21 @@ public class RecipeViewActivity extends AppCompatActivity {
             }
         });
 
-        if(is_bookmarked == true){
+        if (is_bookmarked == true) {
             bookmark.setImageResource(R.drawable.ic_bookmark_checked);
-        }else{
+        } else {
             bookmark.setImageResource(R.drawable.ic_bookmark_unchecked);
         }
 
         bookmark.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.i(TAG,"Button selected");
-                if(is_bookmarked == true){
+                Log.i(TAG, "Button selected");
+                if (is_bookmarked == true) {
                     is_bookmarked = false;
                     bookmark.setImageResource(R.drawable.ic_bookmark_unchecked);
                     saveRecipe(false);
-                }else{
+                } else {
                     is_bookmarked = true;
                     bookmark.setImageResource(R.drawable.ic_bookmark_checked);
                     saveRecipe(true);
@@ -211,39 +212,53 @@ public class RecipeViewActivity extends AppCompatActivity {
         setData();
 
 
-
-        if (video_url.equals("")){
+        if (video_url.equals("")) {
             youtube_rel.setVisibility(View.GONE);
             image_rel.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             image_rel.setVisibility(View.GONE);
             youtube_rel.setVisibility(View.VISIBLE);
             youtubeFragment.initialize("AIzaSyD70aNotNwhQoRmECQz2m8S7aYlUgXCvo4",
                     new YouTubePlayer.OnInitializedListener() {
                         @Override
                         public void onInitializationSuccess(YouTubePlayer.Provider provider,
-                                                            YouTubePlayer youTubePlayer, boolean b) {
+                                                            YouTubePlayer youTubePlayer, boolean wasRestored) {
                             // do any work here to cue video, play video, etc.
                             activePlayer = youTubePlayer;
-                            String url_cue = video_url.substring(video_url.lastIndexOf("?v=")+3);
+                            String url_cue = video_url.substring(video_url.lastIndexOf("?v=") + 3);
 //                        url_cue="FTDrr4ZpijU";
-                            activePlayer.cueVideo(url_cue);
+
+                            activePlayer.setFullscreenControlFlags(YouTubePlayer.FULLSCREEN_FLAG_CONTROL_ORIENTATION |
+                                    YouTubePlayer.FULLSCREEN_FLAG_ALWAYS_FULLSCREEN_IN_LANDSCAPE);
+
+
+                            if (!wasRestored) {
+                                youTubePlayer.cueVideo(url_cue);
+                            }
 
                             activePlayer.setOnFullscreenListener(new YouTubePlayer.OnFullscreenListener() {
                                 @Override
                                 public void onFullscreen(boolean b) {
-                                    FULL_SCREEN_FLAG =b;
+                                    FULL_SCREEN_FLAG = true;
                                 }
                             });
 
 
 //                        youTubePlayer.cueVideo("5xVh-7ywKpE");
                         }
+
                         @Override
                         public void onInitializationFailure(YouTubePlayer.Provider provider,
-                                                            YouTubeInitializationResult youTubeInitializationResult) {
+                                                            YouTubeInitializationResult error) {
 
-                            Log.i(TAG,"FAILURE RESULT: "+youTubeInitializationResult.name());
+                            final int REQUEST_CODE = 1;
+
+                            if (error.isUserRecoverableError()) {
+                                error.getErrorDialog(RecipeViewActivity.this, REQUEST_CODE).show();
+                            } else {
+                                String errorMessage = String.format("There was an error initializing the YoutubePlayer (%1$s)", error.toString());
+                                Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_LONG).show();
+                            }
                         }
                     });
 
@@ -251,15 +266,9 @@ public class RecipeViewActivity extends AppCompatActivity {
         }
 
 
-
-
-
-
-
-
     }
 
-    private void init(){
+    private void init() {
         top_image = (ImageView) findViewById(R.id.top_image);
         tabLayout = (TabLayout) findViewById(R.id.tabLayout);
         img_portions = (ImageView) findViewById(R.id.img_portions);
@@ -269,12 +278,12 @@ public class RecipeViewActivity extends AppCompatActivity {
         tv_minus = (TextView) findViewById(R.id.tv_minus);
         tv_plus = (TextView) findViewById(R.id.tv_plus);
         back = (ImageView) findViewById(R.id.back);
-        back_img=(ImageView) findViewById(R.id.back_img);
+        back_img = (ImageView) findViewById(R.id.back_img);
         bookmark = (ImageView) findViewById(R.id.bookmark);
         tv_recipe_name = (TextView) findViewById(R.id.tv_recipe_name);
         tv_portion_makes = (TextView) findViewById(R.id.tv_portion_makes);
         recipeDetails = (ArrayList<ContentsRecipe>) getIntent().getSerializableExtra("recipeArrayList");
-        pos = getIntent().getIntExtra("position",0);
+        pos = getIntent().getIntExtra("position", 0);
 
         youtube_rel = (RelativeLayout) findViewById(R.id.youtube_rel);
         image_rel = (RelativeLayout) findViewById(R.id.image_rel);
@@ -288,47 +297,47 @@ public class RecipeViewActivity extends AppCompatActivity {
         firebaseUser = mAuth.getCurrentUser();
     }
 
-    private void calculatePortion(int portion){
+    private void calculatePortion(int portion) {
         int portion_size_int;
-        switch (portion){
+        switch (portion) {
             case 1:
                 tv_portions.setText("Portions(1)");
 
                 img_portions.setImageResource(R.drawable.ic_bowl_1);
-                tv_portion_makes.setText(String.valueOf(portion) +" portion = " + portion_size + " " + portion_unit);
+                tv_portion_makes.setText(String.valueOf(portion) + " portion = " + portion_size + " " + portion_unit);
                 break;
             case 2:
                 tv_portions.setText("Portions(2)");
                 img_portions.setImageResource(R.drawable.ic_bowl_2);
-                Log.i(TAG,"Portion size is "+portion_size);
-                Log.i(TAG,"Portion is "+portion);
+                Log.i(TAG, "Portion size is " + portion_size);
+                Log.i(TAG, "Portion is " + portion);
                 portion_size_int = Integer.parseInt(portion_size) * portion;
-                tv_portion_makes.setText(String.valueOf(portion) +" portion = " + String.valueOf(portion_size_int) + " " + portion_unit);
+                tv_portion_makes.setText(String.valueOf(portion) + " portion = " + String.valueOf(portion_size_int) + " " + portion_unit);
                 break;
             case 3:
                 tv_portions.setText("Portions(3)");
                 img_portions.setImageResource(R.drawable.ic_bowl_3);
                 portion_size_int = Integer.parseInt(portion_size) * portion;
-                tv_portion_makes.setText(String.valueOf(portion) +" portion = " + String.valueOf(portion_size_int) + " " + portion_unit);
+                tv_portion_makes.setText(String.valueOf(portion) + " portion = " + String.valueOf(portion_size_int) + " " + portion_unit);
                 break;
             case 4:
                 tv_portions.setText("Portions(4)");
                 img_portions.setImageResource(R.drawable.ic_bowl_4);
                 portion_size_int = Integer.parseInt(portion_size) * portion;
-                tv_portion_makes.setText(String.valueOf(portion) +" portion = " + String.valueOf(portion_size_int) + " " + portion_unit);
+                tv_portion_makes.setText(String.valueOf(portion) + " portion = " + String.valueOf(portion_size_int) + " " + portion_unit);
                 break;
             case 5:
                 tv_portions.setText("Portions(5)");
                 img_portions.setImageResource(R.drawable.ic_bowl_5);
                 portion_size_int = Integer.parseInt(portion_size) * portion;
-                tv_portion_makes.setText(String.valueOf(portion) +" portion = " + String.valueOf(portion_size_int) + " " + portion_unit);
+                tv_portion_makes.setText(String.valueOf(portion) + " portion = " + String.valueOf(portion_size_int) + " " + portion_unit);
                 break;
 
             default:
-                tv_portions.setText("Portions("+String.valueOf(portion)+")");
+                tv_portions.setText("Portions(" + String.valueOf(portion) + ")");
                 img_portions.setImageResource(R.drawable.ic_bowl_more);
                 portion_size_int = Integer.parseInt(portion_size) * portion;
-                tv_portion_makes.setText(String.valueOf(portion) +" portion = " + String.valueOf(portion_size_int) + " " + portion_unit);
+                tv_portion_makes.setText(String.valueOf(portion) + " portion = " + String.valueOf(portion_size_int) + " " + portion_unit);
                 break;
 
         }
@@ -347,9 +356,9 @@ public class RecipeViewActivity extends AppCompatActivity {
         return false;
     }
 
-    private void selectIngredientTab(){
+    private void selectIngredientTab() {
         new Handler().postDelayed(
-                new Runnable(){
+                new Runnable() {
                     @Override
                     public void run() {
                         tabLayout.getTabAt(0).select();
@@ -357,27 +366,27 @@ public class RecipeViewActivity extends AppCompatActivity {
                 }, 100);
     }
 
-    private void setData(){
+    private void setData() {
 
 
-        if(recipeDetails.get(pos).getRecipe_name() != null){
+        if (recipeDetails.get(pos).getRecipe_name() != null) {
             tv_recipe_name.setText(recipeDetails.get(pos).getRecipe_name());
         }
 
-        if(recipeDetails.get(pos).getPrep_time() != null){
+        if (recipeDetails.get(pos).getPrep_time() != null) {
             tv_recipe_prep_time.setText(recipeDetails.get(pos).getPrep_time());
         }
-        if(recipeDetails.get(pos).getVideo_url() != null){
+        if (recipeDetails.get(pos).getVideo_url() != null) {
             video_url = recipeDetails.get(pos).getVideo_url();
-        }else{
+        } else {
             video_url = "";
         }
 
-        if (recipeDetails.get(pos).getPortion() != null){
-            Map<String,Object> portion = recipeDetails.get(pos).getPortion();
-            portion_size = String.valueOf( portion.get("size"));
+        if (recipeDetails.get(pos).getPortion() != null) {
+            Map<String, Object> portion = recipeDetails.get(pos).getPortion();
+            portion_size = String.valueOf(portion.get("size"));
             portion_unit = String.valueOf(portion.get("unit"));
-            tv_portion_makes.setText(String.valueOf(portions) +" portion = " + portion_size + " " + portion_unit);
+            tv_portion_makes.setText(String.valueOf(portions) + " portion = " + portion_size + " " + portion_unit);
 
         }
 
@@ -385,19 +394,17 @@ public class RecipeViewActivity extends AppCompatActivity {
         Glide.with(this).load(recipeDetails.get(pos).getImage_url()).placeholder(R.drawable.pumpkin_soup).into(top_image);
 
 
-
-
     }
 
-    private void saveRecipe(Boolean is_bookmarked){
+    private void saveRecipe(Boolean is_bookmarked) {
 
         Activity mActivity = this;
-        if(firebaseUser!=null){
+        if (firebaseUser != null) {
 
             final Map<String, Object> docData = new HashMap<>();
-            if(is_bookmarked){
+            if (is_bookmarked) {
                 docData.put(mActivity.getString(R.string.saved_recipe_id), FieldValue.arrayUnion(recipeDetails.get(pos).getDocument_id()));
-            }else{
+            } else {
                 docData.put(mActivity.getString(R.string.saved_recipe_id), FieldValue.arrayRemove(recipeDetails.get(pos).getDocument_id()));
 
             }
@@ -407,12 +414,12 @@ public class RecipeViewActivity extends AppCompatActivity {
             docRef.update(docData).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
-                    Log.i(TAG,"Recipe is updated in users favourites");
+                    Log.i(TAG, "Recipe is updated in users favourites");
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    Log.i(TAG,"Recipe could not be saved in users favourites "+e.getMessage());
+                    Log.i(TAG, "Recipe could not be saved in users favourites " + e.getMessage());
                 }
             });
         }
@@ -426,10 +433,10 @@ public class RecipeViewActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        if (FULL_SCREEN_FLAG){
+        if (FULL_SCREEN_FLAG) {
+            FULL_SCREEN_FLAG=false;
             activePlayer.setFullscreen(false);
-        }else{
+        } else {
             finish();
         }
     }
@@ -437,9 +444,9 @@ public class RecipeViewActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        if(activePlayer!=null){
+        if (activePlayer != null) {
             activePlayer.release();
-            activePlayer=null;
+            activePlayer = null;
         }
     }
 }
