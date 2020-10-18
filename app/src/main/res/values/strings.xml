@@ -9,6 +9,8 @@
     <string name="categories_heading">Categories</string>
     <string name="saved_recipes_heading">Saved Recipes</string>
 
+    <string name="search_transition">SEARCH_TRANSITION</string>
+
     <!--    View Recipe Page-->
     <string name="tab_bar_heading_1">Ingredients</string>
     <string name="tab_bar_heading_2">Directions</string>
@@ -21,6 +23,7 @@
     <string name="users">users</string>
     <string name="recipes">recipes</string>
     <string name="categories">categories</string>
+    <string name="share_link">share_link</string>
 
 
     <!--    Firebase Recipe Document Fields-->

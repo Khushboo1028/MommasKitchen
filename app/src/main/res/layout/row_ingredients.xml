@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="12dp">
+    android:paddingVertical="12dp">
 
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -17,17 +17,32 @@
             android:layout_centerVertical="true"
             android:id="@+id/img_ingredient"/>
 
+<!--        <TextView-->
+<!--            android:layout_width="200dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Paneerdfhjdfjdhfjdhfjdhfjdfhjdhf"-->
+<!--            android:fontFamily="@font/sfpro_bold"-->
+<!--            android:textSize="20dp"-->
+<!--            android:inputType="textCapWords"-->
+<!--            android:layout_toRightOf="@id/img_ingredient"-->
+<!--            android:layout_marginStart="18dp"-->
+<!--            android:layout_centerVertical="true"-->
+<!--            android:textColor="@color/colorPrimaryDark"-->
+<!--            android:id="@+id/tv_ingredient_name"/>-->
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Paneer"
-            android:fontFamily="@font/sfpro_bold"
-            android:textSize="20dp"
-            android:inputType="textCapWords"
+            android:scrollHorizontally="false"
+            android:text="Pumpkin Soup"
             android:layout_toRightOf="@id/img_ingredient"
-            android:layout_marginStart="18dp"
-            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@id/tv_ingredient_quantity"
+            android:layout_marginStart="8dp"
             android:textColor="@color/colorPrimaryDark"
+            android:layout_marginRight="8dp"
+            android:fontFamily="@font/sfpro_bold"
+            android:textSize="18dp"
+            android:layout_marginTop="2dp"
             android:id="@+id/tv_ingredient_name"/>
 
         <TextView
@@ -36,10 +51,9 @@
             android:text="200 Grams"
             android:fontFamily="@font/sfpro_bold"
             android:layout_alignParentEnd="true"
-            android:layout_marginEnd="24dp"
             android:layout_centerVertical="true"
             android:textColor="@color/colorPrimaryDark"
-            android:textSize="20dp"
+            android:textSize="18dp"
             android:inputType="textCapWords"
             android:id="@+id/tv_ingredient_quantity"/>
 

@@ -21,25 +21,12 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.android.play.core.appupdate.AppUpdateManager;
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory;
 
-import com.google.android.play.core.appupdate.AppUpdateManager;
-import com.google.android.play.core.appupdate.AppUpdateManagerFactory;
-import com.google.android.play.core.appupdate.AppUpdateInfo;
-import com.google.android.play.core.appupdate.AppUpdateManager;
-import com.google.android.play.core.appupdate.AppUpdateManagerFactory;
-import com.google.android.play.core.appupdate.testing.FakeAppUpdateManager;
-
 import com.google.android.play.core.install.InstallState;
 import com.google.android.play.core.install.InstallStateUpdatedListener;
 import com.google.android.play.core.install.model.AppUpdateType;
 import com.google.android.play.core.install.model.InstallStatus;
 import com.google.android.play.core.install.model.UpdateAvailability;
 
-
-import com.google.android.play.core.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
-
-import com.google.android.play.core.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
 import com.kitchen.mommaskitchen.R;
 import com.kitchen.mommaskitchen.Fragment.RecipeFragment;
 import com.kitchen.mommaskitchen.Fragment.SavedFragment;
@@ -53,10 +40,16 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     public static final String CHANNEL_NAME = "Notifications";
     public static final String CHANNEL_DESC = "This channel is for all notifications";
 
+    private final static String SAVED_FRAGMENT_TAG = "SAVED_FRAGMENT";
+    private final static String RECIPE_FRAGMENT_TAG = "RECIPE_FRAGMENT";
+
+
     private AppUpdateManager mAppUpdateManager;
     private static final int RC_APP_UPDATE = 11;
 
     InstallStateUpdatedListener installStateUpdatedListener;
+
+    BottomNavigationView bottomNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,14 +70,16 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
         }
 
-        loadFragment(new RecipeFragment());
+        loadFragment(new RecipeFragment(), RECIPE_FRAGMENT_TAG);
+
+
 
 
     }
 
     private void init() {
-        BottomNavigationView navigation = findViewById(R.id.bottom_navigation);
-        navigation.setOnNavigationItemSelectedListener(this);
+        bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setOnNavigationItemSelectedListener(this);
 
     }
 
@@ -108,28 +103,32 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     }
 
 
+
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         Fragment fragment = null;
+        String TAG = "";
 
         switch (item.getItemId()) {
             case R.id.saved:
                 fragment = new SavedFragment();
+                TAG = SAVED_FRAGMENT_TAG;
                 break;
 
             case R.id.recipes:
                 fragment = new RecipeFragment();
+                TAG = RECIPE_FRAGMENT_TAG;
                 break;
         }
-        return loadFragment(fragment);
+        return loadFragment(fragment, TAG);
     }
 
-    private boolean loadFragment(Fragment fragment) {
+    private boolean loadFragment(Fragment fragment, String TAG) {
         //switching fragment
         if (fragment != null) {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.fragment_container, fragment)
+                    .replace(R.id.fragment_container, fragment,TAG)
                     .commit();
             return true;
         }
@@ -204,5 +203,21 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         if (mAppUpdateManager != null) {
             mAppUpdateManager.unregisterListener(installStateUpdatedListener);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        final Fragment fragment = getSupportFragmentManager().findFragmentByTag(SAVED_FRAGMENT_TAG);
+
+        if(fragment!=null && fragment.isVisible()){
+            Log.i(TAG,"In Saved Fragment");
+            loadFragment(new RecipeFragment(), RECIPE_FRAGMENT_TAG);
+            bottomNavigationView.setSelectedItemId(R.id.recipes);
+        }else{
+            super.onBackPressed();
+        }
+
+
     }
 }

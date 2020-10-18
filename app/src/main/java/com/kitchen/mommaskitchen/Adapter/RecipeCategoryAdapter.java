@@ -2,6 +2,8 @@ package com.kitchen.mommaskitchen.Adapter;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,8 +11,11 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.RequestOptions;
 import com.kitchen.mommaskitchen.Activity.CategoryActivity;
 import com.kitchen.mommaskitchen.R;
 import com.kitchen.mommaskitchen.Utility.ContentsCategories;
@@ -47,8 +52,16 @@ public class RecipeCategoryAdapter extends RecyclerView.Adapter<RecipeCategoryAd
         Utils utils = new Utils();
         final ContentsCategories contentsCategories = categoriesArrayList.get(i);
 
-//        holder.recipe_image.setImageResource(R.drawable.pumpkin_soup);
-        Glide.with(mActivity).load(contentsCategories.getCategory_image_url()).placeholder(R.drawable.ic_placeholder).into(holder.recipe_image);
+
+        CircularProgressDrawable circularProgressDrawable = new CircularProgressDrawable(mActivity);
+        circularProgressDrawable.setStrokeWidth(10f);
+        circularProgressDrawable.setCenterRadius(60f);
+        circularProgressDrawable.start();
+
+        Glide.with(mActivity).load(contentsCategories.getCategory_image_url())
+                .placeholder(circularProgressDrawable)
+                .into(holder.recipe_image);
+
 
         if(contentsCategories.getCategory_name() != null){
             holder.tv_recipe_category.setText(utils.capitalize(contentsCategories.getCategory_name()));

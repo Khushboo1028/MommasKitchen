@@ -1,9 +1,11 @@
 package com.kitchen.mommaskitchen.Fragment;
 
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,6 +21,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.airbnb.lottie.LottieAnimationView;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -83,8 +87,15 @@ public class SavedFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), SearchActivity.class);
-                startActivity(intent);
-                getActivity().overridePendingTransition(0,0);
+//                startActivity(intent);
+//                getActivity().overridePendingTransition(0,0);
+
+
+                View sharedView = et_search;
+                String transitionName = getString(R.string.search_transition);
+
+                ActivityOptions transitionActivityOptions = ActivityOptions.makeSceneTransitionAnimation(getActivity(), sharedView, transitionName);
+                startActivity(intent, transitionActivityOptions.toBundle());
             }
         });
 
@@ -136,134 +147,132 @@ public class SavedFragment extends Fragment {
         savedRecipeIDArrayList.clear();
         if(firebaseUser!=null){
             db.collection(mActivity.getString(R.string.users)).document(firebaseUser.getUid())
-                    .addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                    .get()
+                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                         @Override
-                        public void onEvent(@Nullable DocumentSnapshot snapshot, @Nullable FirebaseFirestoreException e) {
-                            if(e!=null){
-                                Log.i(TAG,"An error occurred in recovering saved ID'S " +e.getMessage());
-                            }else{
+                        public void onSuccess(DocumentSnapshot snapshot) {
+                            if (snapshot != null && snapshot.exists()) {
+                                Log.d(TAG, "Current data: " + snapshot.getData());
 
-                                if (snapshot != null && snapshot.exists()) {
-                                    Log.d(TAG, "Current data: " + snapshot.getData());
+                                savedRecipeIDArrayList = (ArrayList<String>) snapshot.get(mActivity.getString(R.string.saved_recipe_id));
 
-                                    savedRecipeIDArrayList = (ArrayList<String>) snapshot.get(mActivity.getString(R.string.saved_recipe_id));
+                                final CollectionReference docRef = db.collection(mActivity.getString(R.string.recipes));
+                                listenerRegistration = docRef.orderBy(mActivity.getString(R.string.date_created), Query.Direction.DESCENDING)
+                                        .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException e) {
+                                                if (e != null) {
+                                                    Log.d(TAG, "Error:" + e.getMessage());
+                                                }else{
 
-                                    final CollectionReference docRef = db.collection(mActivity.getString(R.string.recipes));
-                                    listenerRegistration = docRef.orderBy(mActivity.getString(R.string.date_created), Query.Direction.DESCENDING)
-                                            .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                                                @Override
-                                                public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException e) {
-                                                    if (e != null) {
-                                                        Log.d(TAG, "Error:" + e.getMessage());
+                                                    if (snapshots.getDocuments().isEmpty()) {
+                                                        Log.i(TAG, "No Recipes");
                                                     }else{
+                                                        recipeArrayList.clear();
 
-                                                        if (snapshots.getDocuments().isEmpty()) {
-                                                            Log.i(TAG, "No Recipes");
-                                                        }else{
-                                                            recipeArrayList.clear();
-
-                                                            for (final QueryDocumentSnapshot doc : snapshots) {
+                                                        for (final QueryDocumentSnapshot doc : snapshots) {
 
 
-                                                                if(doc.getTimestamp(mActivity.getString(R.string.date_created))!=null){
-                                                                    date_created = doc.getTimestamp(mActivity.getString(R.string.date_created));
-                                                                    SimpleDateFormat sfd_viewFormat = new SimpleDateFormat("MMMM d, yyyy");
-                                                                    date_viewFormat = sfd_viewFormat.format(date_created.toDate());
-                                                                }
+                                                            if(doc.getTimestamp(mActivity.getString(R.string.date_created))!=null){
+                                                                date_created = doc.getTimestamp(mActivity.getString(R.string.date_created));
+                                                                SimpleDateFormat sfd_viewFormat = new SimpleDateFormat("MMMM d, yyyy");
+                                                                date_viewFormat = sfd_viewFormat.format(date_created.toDate());
+                                                            }
 
-                                                                if(doc.get(mActivity.getString(R.string.ingredients)) != null){
-                                                                    ingredients = (Map<String, Map<String, Object>>) doc.get(mActivity.getString(R.string.ingredients));
-
-                                                                }
-
-                                                                if(doc.get(mActivity.getString(R.string.image_url)) != null){
-                                                                    recipe_image_url = doc.getString(mActivity.getString(R.string.image_url));
-
-                                                                }
-
-                                                                if(doc.get(mActivity.getString(R.string.recipe_name)) != null){
-                                                                    recipe_name = doc.getString(mActivity.getString(R.string.recipe_name));
-                                                                }
-
-                                                                if(doc.get(mActivity.getString(R.string.prep_time)) != null){
-                                                                    prep_time = doc.getString(mActivity.getString(R.string.prep_time));
-                                                                }
-
-                                                                if(doc.get(mActivity.getString(R.string.directions)) !=null ){
-                                                                    directions = (ArrayList<String>) doc.get(mActivity.getString(R.string.directions));
-                                                                }
-
-                                                                if(doc.get(mActivity.getString(R.string.portion)) != null){
-                                                                    portion = (Map<String, Object>) doc.get(mActivity.getString(R.string.portion));
-                                                                }
-
-
-                                                                if(doc.get(mActivity.getString(R.string.category_id)) != null){
-                                                                    category_id = doc.getString(mActivity.getString(R.string.category_id));
-                                                                }
-
-                                                                if(doc.get(mActivity.getString(R.string.video_url)) != null){
-                                                                    video_url = doc.getString(mActivity.getString(R.string.video_url));
-                                                                }
-
-
-
-
-                                                                recipeArrayList.add(new ContentsRecipe(
-                                                                        recipe_image_url,
-                                                                        recipe_name,
-                                                                        prep_time,
-                                                                        ingredients,
-                                                                        directions,
-                                                                        date_viewFormat,
-                                                                        portion,
-                                                                        category_id,
-                                                                        doc.getId(),
-                                                                        video_url,
-                                                                        true
-
-                                                                ));
-
-
-
-
+                                                            if(doc.get(mActivity.getString(R.string.ingredients)) != null){
+                                                                ingredients = (Map<String, Map<String, Object>>) doc.get(mActivity.getString(R.string.ingredients));
 
                                                             }
 
-                                                            for(int i = 0;i<recipeArrayList.size();i++){
+                                                            if(doc.get(mActivity.getString(R.string.image_url)) != null){
+                                                                recipe_image_url = doc.getString(mActivity.getString(R.string.image_url));
 
-                                                                if(savedRecipeIDArrayList!=null && savedRecipeIDArrayList.contains(recipeArrayList.get(i).getDocument_id())){
-                                                                    savedRecipesList.add(recipeArrayList.get(i));
-                                                                }
                                                             }
 
-                                                            recipeAdapter = new RecipeAdapter(savedRecipesList,getActivity(), true);
-                                                            recyclerView.setAdapter(recipeAdapter);
-
-                                                            if(savedRecipesList.isEmpty()){
-                                                                lottieAnimationView.setVisibility(View.VISIBLE);
-                                                                tv_saved_recipe.setText("Oops! No Saved Recipes!");
+                                                            if(doc.get(mActivity.getString(R.string.recipe_name)) != null){
+                                                                recipe_name = doc.getString(mActivity.getString(R.string.recipe_name));
                                                             }
+
+                                                            if(doc.get(mActivity.getString(R.string.prep_time)) != null){
+                                                                prep_time = doc.getString(mActivity.getString(R.string.prep_time));
+                                                            }
+
+                                                            if(doc.get(mActivity.getString(R.string.directions)) !=null ){
+                                                                directions = (ArrayList<String>) doc.get(mActivity.getString(R.string.directions));
+                                                            }
+
+                                                            if(doc.get(mActivity.getString(R.string.portion)) != null){
+                                                                portion = (Map<String, Object>) doc.get(mActivity.getString(R.string.portion));
+                                                            }
+
+
+                                                            if(doc.get(mActivity.getString(R.string.category_id)) != null){
+                                                                category_id = doc.getString(mActivity.getString(R.string.category_id));
+                                                            }
+
+                                                            if(doc.get(mActivity.getString(R.string.video_url)) != null){
+                                                                video_url = doc.getString(mActivity.getString(R.string.video_url));
+                                                            }
+
+
+
+
+                                                            recipeArrayList.add(new ContentsRecipe(
+                                                                    recipe_image_url,
+                                                                    recipe_name,
+                                                                    prep_time,
+                                                                    ingredients,
+                                                                    directions,
+                                                                    date_viewFormat,
+                                                                    portion,
+                                                                    category_id,
+                                                                    doc.getId(),
+                                                                    video_url,
+                                                                    true
+
+                                                            ));
+
+
+
+
 
                                                         }
+
+                                                        for(int i = 0;i<recipeArrayList.size();i++){
+
+                                                            if(savedRecipeIDArrayList!=null && savedRecipeIDArrayList.contains(recipeArrayList.get(i).getDocument_id())){
+                                                                savedRecipesList.add(recipeArrayList.get(i));
+                                                            }
+                                                        }
+
+                                                        recipeAdapter = new RecipeAdapter(savedRecipesList,getActivity(), true);
+                                                        recyclerView.setAdapter(recipeAdapter);
+
+                                                        if(savedRecipesList.isEmpty()){
+                                                            lottieAnimationView.setVisibility(View.VISIBLE);
+                                                            tv_saved_recipe.setText("Oops! No Saved Recipes!");
+                                                        }
+
                                                     }
-
-
                                                 }
-                                            });
-                                } else {
-                                    Log.d(TAG, "Current data: null");
-                                }
 
 
-
+                                            }
+                                        });
+                            } else {
+                                Log.d(TAG, "Current data: null");
                             }
-
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d(TAG, "Error occurred "+e.getLocalizedMessage());
                         }
                     });
-
         }
     }
+
 
     @Override
     public void onStop() {
@@ -273,5 +282,6 @@ public class SavedFragment extends Fragment {
             listenerRegistration = null;
         }
     }
+
 
 }

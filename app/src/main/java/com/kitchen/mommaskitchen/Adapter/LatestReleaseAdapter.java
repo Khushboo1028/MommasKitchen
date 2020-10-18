@@ -2,6 +2,8 @@ package com.kitchen.mommaskitchen.Adapter;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +11,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
 
 import com.bumptech.glide.Glide;
@@ -43,8 +46,13 @@ public class LatestReleaseAdapter extends RecyclerView.Adapter<LatestReleaseAdap
 
         final ContentsRecipe contentsRecipe = recipeArrayList.get(i);
 
+        CircularProgressDrawable circularProgressDrawable = new CircularProgressDrawable(mActivity);
+        circularProgressDrawable.setStrokeWidth(10f);
+        circularProgressDrawable.setCenterRadius(60f);
+        circularProgressDrawable.setColorSchemeColors(R.color.colorPrimary);
+        circularProgressDrawable.start();
 
-        Glide.with(mActivity).load(contentsRecipe.getImage_url()).placeholder(R.drawable.ic_placeholder).into(holder.recipe_image);
+        Glide.with(mActivity).load(contentsRecipe.getImage_url()).placeholder(circularProgressDrawable).into(holder.recipe_image);
         holder.tv_recipe_name.setText(contentsRecipe.getRecipe_name());
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {

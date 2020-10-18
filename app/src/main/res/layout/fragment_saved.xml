@@ -55,6 +55,9 @@
                     android:textColor="@color/colorPrimaryDark"
                     android:paddingStart="24dp"
                     android:maxLines="1"
+                    android:focusable="false"
+                    android:hint="Search"
+                    android:transitionName="@string/search_transition"
                     android:layout_centerVertical="true"
                     android:id="@+id/et_search"/>
 

@@ -1,6 +1,7 @@
 package com.kitchen.mommaskitchen.Fragment;
 
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -18,6 +19,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -55,7 +57,6 @@ public class RecipeFragment extends Fragment {
 
     private RecyclerView categoryRecyclerView;
     private RecipeCategoryAdapter recipeCategoryAdapter;
-    EditText et_search;
     RelativeLayout relative_layout;
     View view;
 
@@ -86,6 +87,8 @@ public class RecipeFragment extends Fragment {
 
 
 
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -98,19 +101,22 @@ public class RecipeFragment extends Fragment {
         searchView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                getFragmentManager()
-//                        .beginTransaction()
-//                        .add(R.id.fragment_container, new SearchFragment())
-//                        .commit();
+
 
                 Intent intent = new Intent(getContext(), SearchActivity.class);
-                startActivity(intent);
-                getActivity().overridePendingTransition(0,0);
+//                startActivity(intent);
+//                getActivity().overridePendingTransition(0,0);
+
+                View sharedView = searchView;
+                String transitionName = getString(R.string.search_transition);
+
+                ActivityOptions transitionActivityOptions = ActivityOptions.makeSceneTransitionAnimation(getActivity(), sharedView, transitionName);
+                startActivity(intent, transitionActivityOptions.toBundle());
             }
         });
 
         getSavedRecipes(getActivity());
-        getCategories();
+        getCategories(getActivity());
 
 
 
@@ -151,6 +157,7 @@ public class RecipeFragment extends Fragment {
 
 
     public void getRecipes(final Activity mActivity){
+
 
         final CollectionReference docRef = db.collection(mActivity.getString(R.string.recipes));
 
@@ -246,8 +253,10 @@ public class RecipeFragment extends Fragment {
                                         }
                                     }
 
-                                    Log.i(TAG,"size: " +latestRecipes.size());
+
                                     latestReleaseAdapter.notifyDataSetChanged();
+
+                                    Log.i(TAG, "Latest recipes " + latestRecipes);
 
 
 
@@ -262,10 +271,10 @@ public class RecipeFragment extends Fragment {
 
     }
 
-    public void getCategories(){
-        CollectionReference categoryRef = db.collection(getString(R.string.categories));
+    public void getCategories(Activity mActivity){
+        CollectionReference categoryRef = db.collection(mActivity.getString(R.string.categories));
 
-        listenerRegistration = categoryRef.orderBy(getString(R.string.date_created), Query.Direction.DESCENDING)
+        listenerRegistration = categoryRef.orderBy(mActivity.getString(R.string.date_created), Query.Direction.DESCENDING)
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException e) {
@@ -276,8 +285,8 @@ public class RecipeFragment extends Fragment {
                             categoriesArrayList.clear();
                             for(QueryDocumentSnapshot doc:snapshots){
 
-                                category_name = doc.getString(getString(R.string.category_name));
-                                category_image_url = doc.getString(getString(R.string.category_image_url));
+                                category_name = doc.getString(mActivity.getString(R.string.category_name));
+                                category_image_url = doc.getString(mActivity.getString(R.string.category_image_url));
                                 categoriesArrayList.add(new ContentsCategories(category_name,category_image_url,doc.getId()));
                             }
 
@@ -316,6 +325,8 @@ public class RecipeFragment extends Fragment {
 
         }
     }
+
+
 
     @Override
     public void onStop() {

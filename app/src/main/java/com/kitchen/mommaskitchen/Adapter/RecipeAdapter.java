@@ -12,6 +12,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -72,7 +73,12 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int i) {
 
         final ContentsRecipe contentsRecipe = recipeArrayList.get(i);
-        Glide.with(mActivity).load(contentsRecipe.getImage_url()).placeholder(R.drawable.ic_placeholder).into(holder.recipe_image);
+        CircularProgressDrawable circularProgressDrawable = new CircularProgressDrawable(mActivity);
+        circularProgressDrawable.setStrokeWidth(10f);
+        circularProgressDrawable.setCenterRadius(60f);
+        circularProgressDrawable.start();
+
+        Glide.with(mActivity).load(contentsRecipe.getImage_url()).placeholder(circularProgressDrawable).into(holder.recipe_image);
 
         holder.tv_recipe_name.setText(contentsRecipe.getRecipe_name());
 

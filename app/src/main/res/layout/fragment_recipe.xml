@@ -30,10 +30,12 @@
                 android:backgroundTint="#1C000000"
                 android:maxLines="1"
                 android:imeOptions="actionSearch"
+                android:singleLine="true"
                 android:hint="Search"
                 android:fontFamily="@font/sfpro_regular"
                 android:textColor="@color/colorPrimaryDark"
                 android:paddingStart="24dp"
+                android:transitionName="@string/search_transition"
                 android:layout_centerVertical="true"
                 android:id="@+id/et_search"/>
 
@@ -96,6 +98,7 @@
                 android:src="@drawable/ic_dot"
                 android:layout_toRightOf="@id/dot2"
                 android:id="@+id/dot3"/>
+
 
         </RelativeLayout>
 

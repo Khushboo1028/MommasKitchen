@@ -10,7 +10,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -34,6 +36,9 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.kitchen.mommaskitchen.Fragment.DirectionsFragment;
 import com.kitchen.mommaskitchen.Fragment.IngredientsFragment;
 import com.kitchen.mommaskitchen.R;
@@ -50,7 +55,7 @@ import java.util.Map;
 public class RecipeViewActivity extends AppCompatActivity {
 
     public static final String TAG = "RecipeViewActivity";
-    ImageView top_image, img_portions, bookmark;
+    ImageView top_image, img_portions, bookmark, img_share;
     TabLayout tabLayout;
     TextView tv_minus, tv_plus, tv_portions, tv_recipe_prep_time, tv_portion_size, tv_recipe_name, tv_portion_makes;
     int tab_position;
@@ -72,9 +77,13 @@ public class RecipeViewActivity extends AppCompatActivity {
     int pos;
     Boolean FULL_SCREEN_FLAG = false;
 
-    String portion_size, portion_unit;
+    String portion_size, portion_unit, share_link;
 
-    RelativeLayout youtube_rel, image_rel;
+    RelativeLayout youtube_rel, image_rel, mid_rel;
+
+
+    ListenerRegistration listenerRegistration;
+
 
 
 
@@ -223,7 +232,9 @@ public class RecipeViewActivity extends AppCompatActivity {
         if (video_url.equals("")) {
             youtube_rel.setVisibility(View.GONE);
             image_rel.setVisibility(View.VISIBLE);
+
         } else {
+
             image_rel.setVisibility(View.GONE);
             youtube_rel.setVisibility(View.VISIBLE);
             youtubeFragment.initialize("AIzaSyD70aNotNwhQoRmECQz2m8S7aYlUgXCvo4",
@@ -252,7 +263,7 @@ public class RecipeViewActivity extends AppCompatActivity {
                             });
 
 
-//                        youTubePlayer.cueVideo("5xVh-7ywKpE");
+
                         }
 
                         @Override
@@ -273,6 +284,21 @@ public class RecipeViewActivity extends AppCompatActivity {
 
         }
 
+        getShareLink();
+        img_share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String share_text = "Check out this amazing "+ recipeDetails.get(pos).getRecipe_name()+ " recipe I found!" + "\n\nDownload from Play Store:\n"+ share_link;
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, share_text);
+                sendIntent.setType("text/plain");
+
+                Intent shareIntent = Intent.createChooser(sendIntent, null);
+                startActivity(shareIntent);
+            }
+        });
+
 
     }
 
@@ -287,11 +313,13 @@ public class RecipeViewActivity extends AppCompatActivity {
         tv_plus = (TextView) findViewById(R.id.tv_plus);
         back = (ImageView) findViewById(R.id.back);
         back_img = (ImageView) findViewById(R.id.back_img);
+        img_share = (ImageView) findViewById(R.id.img_share);
         bookmark = (ImageView) findViewById(R.id.bookmark);
         tv_recipe_name = (TextView) findViewById(R.id.tv_recipe_name);
         tv_portion_makes = (TextView) findViewById(R.id.tv_portion_makes);
         recipeDetails = (ArrayList<ContentsRecipe>) getIntent().getSerializableExtra("recipeArrayList");
         pos = getIntent().getIntExtra("position", 0);
+        mid_rel = (RelativeLayout) findViewById(R.id.mid_rel);
 
         youtube_rel = (RelativeLayout) findViewById(R.id.youtube_rel);
         image_rel = (RelativeLayout) findViewById(R.id.image_rel);
@@ -305,6 +333,7 @@ public class RecipeViewActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         firebaseUser = mAuth.getCurrentUser();
     }
+
 
     private void calculatePortion(int portion) {
         int portion_size_int;
@@ -351,6 +380,7 @@ public class RecipeViewActivity extends AppCompatActivity {
 
         }
     }
+
 
 
     private boolean loadFragment(Fragment fragment) {
@@ -471,6 +501,30 @@ public class RecipeViewActivity extends AppCompatActivity {
         }
     }
 
+    private void getShareLink(){
+        listenerRegistration = db.collection(getString(R.string.share_link))
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException e) {
+
+                        if(e!=null){
+                            Log.i(TAG,"Error is "+e.getMessage());
+                        }else{
+                            if(snapshots!=null && !snapshots.isEmpty()) {
+
+                                for (final QueryDocumentSnapshot doc : snapshots) {
+                                    share_link = doc.getString(getString(R.string.share_link));
+
+                                }
+
+
+                            }
+                        }
+
+                    }
+                });
+    }
+
 
     @Override
     protected void onDestroy() {
@@ -494,6 +548,10 @@ public class RecipeViewActivity extends AppCompatActivity {
         if (activePlayer != null) {
             activePlayer.release();
             activePlayer = null;
+        }
+
+        if(listenerRegistration!=null){
+            listenerRegistration=null;
         }
     }
 }

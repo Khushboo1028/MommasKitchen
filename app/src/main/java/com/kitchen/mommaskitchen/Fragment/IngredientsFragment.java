@@ -44,10 +44,6 @@ public class IngredientsFragment extends Fragment {
         Log.i(TAG,"Portions is "+portions);
 
 
-//        ingredientsArrayList.add(new ContentsIngredients("Pumpkin", 200,"Grams"));
-//        ingredientsArrayList.add(new ContentsIngredients("Maida", (float) 2.5,"Cups"));
-//        ingredientsArrayList.add(new ContentsIngredients("Potato", 2,"Kg"));
-
 
 
 
@@ -56,6 +52,8 @@ public class IngredientsFragment extends Fragment {
 
                 String recipe_name = key;
                 float recipe_qty = Float.parseFloat(ingredients.get(key).get("qty").toString());
+
+
                 String units;
                 if(ingredients.get(key).get("units")!=null){
                     units = ingredients.get(key).get("units").toString();
